@@ -20,11 +20,11 @@ resource "opentelekomcloud_vpc_eip_v1" "fip" {
 resource "opentelekomcloud_lb_loadbalancer_v3" "lb" {
   count = var.lb_count
 
-  name            = "lb-${count.index + 1}"
-  router_id       = var.vpc_id
-  network_ids     = [var.subnet_id]
-  subnet_id = var.vpc_subnet 
-  l4_flavor       = data.opentelekomcloud_lb_flavor_v3.elb_dedicated_L4_flavor.id
+  name             = "lb-${count.index + 1}"
+  router_id        = var.vpc_id
+  network_ids      = [var.subnet_id]
+  subnet_id        = var.vpc_subnet
+  l4_flavor        = data.opentelekomcloud_lb_flavor_v3.elb_dedicated_L4_flavor.id
   ip_target_enable = true
 
   public_ip {
@@ -36,11 +36,11 @@ resource "opentelekomcloud_lb_loadbalancer_v3" "lb" {
 
 resource "opentelekomcloud_lb_pool_v3" "pool" {
   count = var.lb_count
-  name            = "kubernetes-nodeport-${count.index +1}"
+  name  = "kubernetes-nodeport-${count.index + 1}"
   #loadbalancer_id = opentelekomcloud_lb_loadbalancer_v3.lb[count.index].id
-  listener_id = opentelekomcloud_lb_listener_v3.listener[count.index].id
-  lb_algorithm    = "ROUND_ROBIN"
-  protocol        = "TCP"
+  listener_id  = opentelekomcloud_lb_listener_v3.listener[count.index].id
+  lb_algorithm = "ROUND_ROBIN"
+  protocol     = "TCP"
 }
 
 resource "opentelekomcloud_lb_listener_v3" "listener" {
@@ -59,6 +59,6 @@ resource "opentelekomcloud_lb_member_v3" "member" {
 
   pool_id       = opentelekomcloud_lb_pool_v3.pool[count.index % var.lb_count].id
   address       = var.lb_members[floor(count.index / var.lb_count)]
-  protocol_port = 30281 
+  protocol_port = 30281
 }
 
