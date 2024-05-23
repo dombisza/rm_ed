@@ -55,6 +55,7 @@ module "elb" {
   vpc_id = module.vpc.vpc_id
   subnet_id = module.vpc.subnet_id
   lb_members = module.cce.node_private_ips
+  vpc_subnet = module.vpc.vpc_subnet
 }
 
 output "elb_members" {

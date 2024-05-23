@@ -30,3 +30,9 @@ output "network_id" {
 output "cidr" {
   value = opentelekomcloud_vpc_subnet_v1.this.cidr
 }
+
+output "vpc_subnet" {
+  value = opentelekomcloud_vpc_subnet_v1.this.subnet_id
+}
+
+

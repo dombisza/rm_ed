@@ -5,3 +5,4 @@ variable "lb_count" {
   default = 2
 }
 variable "lb_members" {}
+variable "vpc_subnet" {}

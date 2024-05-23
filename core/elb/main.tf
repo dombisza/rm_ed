@@ -23,6 +23,7 @@ resource "opentelekomcloud_lb_loadbalancer_v3" "lb" {
   name            = "lb-${count.index + 1}"
   router_id       = var.vpc_id
   network_ids     = [var.subnet_id]
+  subnet_id = var.vpc_subnet 
   l4_flavor       = data.opentelekomcloud_lb_flavor_v3.elb_dedicated_L4_flavor.id
   ip_target_enable = true
 
