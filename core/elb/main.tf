@@ -54,10 +54,10 @@ resource "opentelekomcloud_lb_listener_v3" "listener" {
 }
 
 resource "opentelekomcloud_lb_member_v3" "member" {
-  count = length(var.lb_members)
+  count = length(var.lb_members) * var.lb_count
 
   pool_id       = opentelekomcloud_lb_pool_v3.pool[count.index % var.lb_count].id
-  address       = var.lb_members[count.index]
+  address       = var.lb_members[floor(count.index / var.lb_count)]
   protocol_port = 30281 
 }
 
