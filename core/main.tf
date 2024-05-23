@@ -49,3 +49,14 @@ module "cce" {
   cnt = "vpc-router"
 }
 
+module "elb" {
+  source = "./elb"
+  prefix = local.prefix
+  vpc_id = module.vpc.vpc_id
+  subnet_id = module.vpc.subnet_id
+  lb_members = module.cce.node_private_ips
+}
+
+output "elb_members" {
+  value = module.cce.node_private_ips
+}
