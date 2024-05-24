@@ -1,0 +1,23 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: nginx
+  name: nginx-deployment
+  namespace: default
+spec:
+  clusterIP: 10.247.147.131
+  clusterIPs:
+  - 10.247.147.131
+  externalTrafficPolicy: Local 
+  ipFamilies:
+  - IPv4
+  ports:
+  - nodePort: 31914 
+    port: 80
+    protocol: TCP
+    targetPort: 80
+  selector:
+    app: nginx
+  sessionAffinity: None
+  type: NodePort
