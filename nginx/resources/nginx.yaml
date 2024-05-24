@@ -6,7 +6,7 @@ metadata:
   labels:
     app: nginx-app
 spec:
-  replicas: 3
+  replicas: 1
   selector:
     matchLabels:
       app: nginx-app
@@ -18,10 +18,10 @@ spec:
       initContainers:
       - name: init-write-hostname
         image: busybox
-        command: ['sh', '-c', 'echo $(hostname) > /usr/share/nginx/html/index.html']
+        command: ['sh', '-c', 'echo $(hostname) > /usr/share/nginx/html/v1/index.html']
         volumeMounts:
         - name: html
-          mountPath: /usr/share/nginx/html
+          mountPath: /usr/share/nginx/html/v1
       containers:
       - name: nginx
         image: nginx:latest
@@ -29,7 +29,7 @@ spec:
         - containerPort: 80
         volumeMounts:
         - name: html
-          mountPath: /usr/share/nginx/html
+          mountPath: /usr/share/nginx/html/v1
       volumes:
       - name: html
         emptyDir: {}
