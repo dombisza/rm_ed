@@ -1,9 +1,7 @@
 controller:
-  enableAnnotationValidations: true
-  kind: daemonset
+  kind: DaemonSet 
   service:
-    #externalTrafficPolicy: Cluster 
-    httpPort:
-      nodePort: 32180 
     type: NodePort
+    nodePorts: 
+     http: 31709
 
