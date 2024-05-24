@@ -6,3 +6,4 @@ variable "lb_count" {
 }
 variable "lb_members" {}
 variable "vpc_subnet" {}
+variable "nodeport" {}

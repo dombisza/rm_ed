@@ -47,6 +47,7 @@ module "cce" {
   scale_enabled = true
   node_os       = "HCE OS 2.0"
   cnt           = "vpc-router"
+  node_count    = 3
 }
 
 module "elb" {
@@ -55,7 +56,9 @@ module "elb" {
   vpc_id     = module.vpc.vpc_id
   subnet_id  = module.vpc.subnet_id
   lb_members = module.cce.node_private_ips
+  lb_count   = 2
   vpc_subnet = module.vpc.vpc_subnet
+  nodeport   = 31914
 }
 
 output "elb_members" {

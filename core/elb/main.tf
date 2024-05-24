@@ -59,6 +59,6 @@ resource "opentelekomcloud_lb_member_v3" "member" {
 
   pool_id       = opentelekomcloud_lb_pool_v3.pool[count.index % var.lb_count].id
   address       = var.lb_members[floor(count.index / var.lb_count)]
-  protocol_port = 30281
+  protocol_port = var.nodeport 
 }
 
