@@ -3,7 +3,7 @@ data "opentelekomcloud_lb_flavor_v3" "elb_dedicated_L4_flavor" {
 }
 
 resource "opentelekomcloud_vpc_eip_v1" "fip" {
-  count = var.lb_count
+  count = var.lb_config.lb_count
 
   bandwidth {
     charge_mode = "traffic"
@@ -18,7 +18,7 @@ resource "opentelekomcloud_vpc_eip_v1" "fip" {
 }
 
 resource "opentelekomcloud_lb_loadbalancer_v3" "lb" {
-  count = var.lb_count
+  count = var.lb_config.lb_count
 
   name             = "lb-${count.index + 1}"
   router_id        = var.vpc_id
@@ -35,7 +35,7 @@ resource "opentelekomcloud_lb_loadbalancer_v3" "lb" {
 }
 
 resource "opentelekomcloud_lb_pool_v3" "pool" {
-  count = var.lb_count
+  count = var.lb_config.lb_count
   name  = "kubernetes-nodeport-${count.index + 1}"
   #loadbalancer_id = opentelekomcloud_lb_loadbalancer_v3.lb[count.index].id
   listener_id  = opentelekomcloud_lb_listener_v3.listener[count.index].id
@@ -44,7 +44,7 @@ resource "opentelekomcloud_lb_pool_v3" "pool" {
 }
 
 resource "opentelekomcloud_lb_listener_v3" "listener" {
-  count           = var.lb_count
+  count           = var.lb_config.lb_count
   protocol        = "TCP"
   protocol_port   = 80
   loadbalancer_id = opentelekomcloud_lb_loadbalancer_v3.lb[count.index].id
@@ -55,7 +55,7 @@ resource "opentelekomcloud_lb_listener_v3" "listener" {
 }
 
 resource "opentelekomcloud_lb_member_v3" "member" {
-  count = length(var.lb_members) * var.lb_count
+  count = length(var.lb_config.lb_members) * var.lb_config.lb_count
 
   pool_id       = opentelekomcloud_lb_pool_v3.pool[count.index % var.lb_count].id
   address       = var.lb_members[floor(count.index / var.lb_count)]

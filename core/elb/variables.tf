@@ -1,9 +1,45 @@
-variable "prefix" {}
-variable "vpc_id" {}
-variable "subnet_id" {}
-variable "lb_count" {
-  default = 2
+#variable "prefix" {}
+#variable "vpc_id" {}
+#variable "subnet_id" {}
+#variable "lb_count" {
+#  default = 2
+#}
+#variable "lb_members" {}
+#variable "vpc_subnet" {}
+#variable "nodeport" {}
+
+
+variable "prefix" {
+  type        = string
+  description = "Prefix for all OTC resource names"
 }
-variable "lb_members" {}
-variable "vpc_subnet" {}
-variable "nodeport" {}
+
+variable "vpc_id" {
+  type        = string
+  description = "Previously created vpc id."
+}
+
+variable "vpc_subnet" {
+  type        = string
+  description = "Previously created  subnet id."
+}
+
+variable "subnet_id" {
+    type        = string
+    description = "The ID of the subnet to which the LoadBalancer belongs"
+}
+
+variable "nodeport" {
+  type = number
+  description = "Nodeport to where the LB connects"
+}
+
+variable "lb_config" {
+  description = "LB configurational parameters"
+  type = object({
+    lb_count      = number
+    eip_bandwidth = number 
+    lb_method     = string 
+    lb_members    = string
+  })
+}
