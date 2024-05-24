@@ -1,8 +1,7 @@
 controller:
-  kind: daemonset
+  kind: DaemonSet 
   service:
-    externalTrafficPolicy: Local
-    httpPort:
-      nodePort: 32180 
     type: NodePort
+    nodePorts: 
+     http: 31709
 
