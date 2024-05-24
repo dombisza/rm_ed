@@ -1,0 +1,9 @@
+releases:
+  - name: nginx
+    chart: oci://ghcr.io/nginxinc/charts/nginx-ingress
+    version: 1.2.1
+    namespace: ingress 
+    values:
+      - values.yaml
+helmDefaults:
+  createNamespace: true
