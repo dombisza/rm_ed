@@ -25,8 +25,8 @@ variable "vpc_subnet" {
 }
 
 variable "subnet_id" {
-    type        = string
-    description = "The ID of the subnet to which the LoadBalancer belongs"
+  type        = string
+  description = "The ID of the subnet to which the LoadBalancer belongs"
 }
 
 variable "nodeport" {
@@ -35,11 +35,17 @@ variable "nodeport" {
 }
 
 variable "lb_config" {
-  description = "LB configurational parameters"
   type = object({
     lb_count      = number
     eip_bandwidth = number 
-    lb_method     = string 
+    lb_algorithm  = string
+    lb_protocol   = string 
     lb_members    = string
   })
+  description = "LB configurational parameters"
 }
+
+#variable "disable_health_check" {
+#  type    = bool
+#  default = false
+#}

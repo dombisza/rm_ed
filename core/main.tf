@@ -55,10 +55,9 @@ module "elb" {
   prefix     = local.prefix
   vpc_id     = module.vpc.vpc_id
   subnet_id  = module.vpc.subnet_id
-  lb_members = module.cce.node_private_ips
-  lb_count   = 2
   vpc_subnet = module.vpc.vpc_subnet
   nodeport   = 31914
+  lb_config  = module.elb.lb_config
 }
 
 output "elb_members" {
