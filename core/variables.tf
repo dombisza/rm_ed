@@ -24,13 +24,20 @@ variable "region" {
 }
 
 variable "lb_config" {
-  description = "LB configurational parameters"
   type = object({
     lb_count      = number
     eip_bandwidth = number 
     lb_algorithm  = string
     lb_protocol   = string 
-    lb_members    = string
+    lb_members    = list(string)
   })
+  default = {
+    lb_count      = 2
+    eip_bandwidth = 100
+    lb_algorithm  = "ROUND_ROBIN"
+    lb_protocol   = "TCP"
+    lb_members    = []
+  }
+  description = "LB configurational parameters"
 }
 

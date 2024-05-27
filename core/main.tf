@@ -57,7 +57,7 @@ module "elb" {
   subnet_id  = module.vpc.subnet_id
   vpc_subnet = module.vpc.vpc_subnet
   nodeport   = 31914
-  lb_config  = module.elb.lb_config
+  lb_config = var.lb_config
 }
 
 output "elb_members" {
