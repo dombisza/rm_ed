@@ -80,12 +80,11 @@ resource "opentelekomcloud_lb_monitor_v3" "lb_node_health_check" {
   count        = var.disable_health_check ? 0 : var.lb_config.lb_count
   name         = "${var.prefix}-node-health"
   pool_id      = opentelekomcloud_lb_pool_v3.lb_node_pool[count.index].id
-  type         = "HTTP"
+  type         = "TCP"
   delay        = 15
   timeout      = 10
-  monitor_port = 8080
+  monitor_port = 80
 
-  expected_codes   = "200,202"
   max_retries      = 10
   max_retries_down = 1
 }
