@@ -64,7 +64,7 @@ resource "opentelekomcloud_cce_node_v3" "node" {
   count             = var.node_count
   name              = "node${count.index + 1}"
   cluster_id        = opentelekomcloud_cce_cluster_v3.this.id
-  availability_zone = "eu-de-01" 
+  availability_zone = var.availability_zone 
 
   os          = var.node_os
   flavor_id   = var.node_flavor 

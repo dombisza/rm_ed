@@ -1,8 +1,8 @@
 data "opentelekomcloud_identity_project_v3" "current" {}
 
-variable "azs" {
-  type = list
-  default = ["eu-de-01", "eu-de-02"]
+variable "availability_zone" {
+  type = string
+  default = "eu-de-01"
 }
 
 variable "node_count" {

@@ -47,7 +47,7 @@ module "cce" {
   scale_enabled = true
   node_os       = "HCE OS 2.0"
   cnt           = "vpc-router"
-  node_count    = 3
+  node_count    = 4
 }
 
 module "elb" {
@@ -57,9 +57,17 @@ module "elb" {
   subnet_id  = module.vpc.subnet_id
   vpc_subnet = module.vpc.vpc_subnet
   nodeport   = 31914
-  lb_config = var.lb_config
+  #lb_config  = module.elb.lb_config
+  lb_config = {
+    lb_count      = var.lb_config.lb_count
+    eip_bandwidth = var.lb_config.eip_bandwidth
+    lb_algorithm  = var.lb_config.lb_algorithm
+    lb_protocol   = var.lb_config.lb_protocol
+    lb_members    = module.cce.node_private_ips
+  }
 }
 
 output "elb_members" {
   value = module.cce.node_private_ips
+  #value = [for node in opentelekomcloud_cce_node_v3.node : node.private_ip]
 }
