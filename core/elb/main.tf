@@ -17,6 +17,10 @@ resource "opentelekomcloud_lb_loadbalancer_v3" "node_lb" {
   public_ip {
     id = opentelekomcloud_vpc_eip_v1.lb_fip[count.index].id
   }
+
+  depends_on = [
+    opentelekomcloud_vpc_eip_v1.lb_fip
+  ]
 }
 
 resource "opentelekomcloud_vpc_eip_v1" "lb_fip" {
@@ -28,7 +32,7 @@ resource "opentelekomcloud_vpc_eip_v1" "lb_fip" {
     share_type  = "PER"
     charge_mode = "traffic"
   }
-  
+
   publicip {
     type    = "5_bgp"
     #port_id = opentelekomcloud_lb_loadbalancer_v3.node_lb[count.index].vip_port_id
@@ -37,10 +41,6 @@ resource "opentelekomcloud_vpc_eip_v1" "lb_fip" {
   lifecycle {
     prevent_destroy = false # Releasing the EIP of the application is irreversible and will cause the application to be unreachable until new ip address completes DNS propagation.
   }
-
-  depends_on = [
-    opentelekomcloud_lb_loadbalancer_v3.node_lb
-  ]
 }
 
 resource "opentelekomcloud_lb_listener_v3" "listener" {
