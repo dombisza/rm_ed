@@ -21,12 +21,14 @@ resource "opentelekomcloud_lb_loadbalancer_v3" "node_lb" {
 
 resource "opentelekomcloud_vpc_eip_v1" "lb_fip" {
   count = var.lb_config.lb_count
+
   bandwidth {
     name        = "${var.prefix}-node-bandwidth"
     size        = var.lb_config.eip_bandwidth
     share_type  = "PER"
     charge_mode = "traffic"
   }
+  
   publicip {
     type    = "5_bgp"
     #port_id = opentelekomcloud_lb_loadbalancer_v3.node_lb[count.index].vip_port_id
@@ -36,37 +38,10 @@ resource "opentelekomcloud_vpc_eip_v1" "lb_fip" {
     prevent_destroy = false # Releasing the EIP of the application is irreversible and will cause the application to be unreachable until new ip address completes DNS propagation.
   }
 
-  #depends_on = [
-  #  opentelekomcloud_lb_loadbalancer_v3.node_lb
-  #]
+  depends_on = [
+    opentelekomcloud_lb_loadbalancer_v3.node_lb
+  ]
 }
-
-#resource "opentelekomcloud_vpc_eip_associate_v1" "eip_association" {
-#  count   = var.lb_config.lb_count
-#  eip_id  = opentelekomcloud_vpc_eip_v1.lb_fip[count.index].id
-#  port_id = opentelekomcloud_lb_loadbalancer_v3.node_lb[count.index].vip_port_id
-#
-#  depends_on = [
-#    opentelekomcloud_lb_loadbalancer_v3.node_lb,
-#    opentelekomcloud_vpc_eip_v1.lb_fip
-#  ]
-#}
-
-#resource "opentelekomcloud_lb_listener_v3" "listener" {
-#  name            = "kubernetes nodepool"
-#  count           = var.lb_config.lb_count
-#  protocol        = var.lb_config.lb_protocol
-#  protocol_port   = 80
-#  loadbalancer_id = opentelekomcloud_lb_loadbalancer_v3.node_lb[count.index].id
-#
-#  tags = {
-#    muh = "kuh"
-#  }
-#}
-
-#locals {
-#  loadbalancer_count = length(var.node_lb_ids)
-#}
 
 resource "opentelekomcloud_lb_listener_v3" "listener" {
   #count           = local.loadbalancer_count
@@ -77,8 +52,6 @@ resource "opentelekomcloud_lb_listener_v3" "listener" {
   #loadbalancer_id = var.node_lb_ids[count.index]
   loadbalancer_id = opentelekomcloud_lb_loadbalancer_v3.node_lb[count.index].id
 
-  description     = "Http listener for redirect"
-
   lifecycle {
     create_before_destroy = true
   }
@@ -87,13 +60,12 @@ resource "opentelekomcloud_lb_listener_v3" "listener" {
 resource "opentelekomcloud_lb_pool_v3" "lb_node_pool" {
   count = var.lb_config.lb_count
   name  = "kubernetes-nodeport-${count.index + 1}"
+
   loadbalancer_id = opentelekomcloud_lb_loadbalancer_v3.node_lb[count.index].id
-  listener_id  = opentelekomcloud_lb_listener_v3.listener[count.index].id
-  lb_algorithm = var.lb_config.lb_algorithm
-  protocol     = var.lb_config.lb_protocol
-  #lb_algorithm = "ROUND_ROBIN"
-  #protocol     = "TCP"
-  description  = "Pool of application nodes"
+  listener_id     = opentelekomcloud_lb_listener_v3.listener[count.index].id
+  lb_algorithm    = var.lb_config.lb_algorithm
+  protocol        = var.lb_config.lb_protocol
+  description     = "Pool of application nodes"
 }
 
 resource "opentelekomcloud_lb_member_v3" "member" {
@@ -104,21 +76,6 @@ resource "opentelekomcloud_lb_member_v3" "member" {
   protocol_port = var.nodeport
 }
 
-#resource "opentelekomcloud_lb_monitor_v2" "lb_node_health_check" {
-#  count          = var.disable_health_check ? 0 : var.lb_config.lb_count
-#  name           = "${var.prefix}-node-health"
-#  pool_id        = opentelekomcloud_lb_pool_v2.lb_node_pool[count.index].id
-#  type           = "HTTP"
-#  monitor_port   = var.health_endpoint.port
-#  delay          = 15
-#  timeout        = 10
-#  url_path       = var.health_endpoint.path
-#  domain_name    = var.health_endpoint.domain
-#  max_retries    = 10
-#  expected_codes = "200,202"
-#  admin_state_up = true
-#}
-
 resource "opentelekomcloud_lb_monitor_v3" "lb_node_health_check" {
   count        = var.disable_health_check ? 0 : var.lb_config.lb_count
   name         = "${var.prefix}-node-health"
@@ -128,6 +85,7 @@ resource "opentelekomcloud_lb_monitor_v3" "lb_node_health_check" {
   timeout      = 10
   monitor_port = 8080
 
+  expected_codes   = "200,202"
   max_retries      = 10
   max_retries_down = 1
 }
