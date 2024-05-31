@@ -13,4 +13,3 @@ controller:
       effect: "NoSchedule"
   nodeSelector:
     ingress: "true"
-
