@@ -47,7 +47,7 @@ module "cce" {
   scale_enabled = true
   node_os       = "HCE OS 2.0"
   cnt           = "vpc-router"
-  node_count    = 4
+  ingress_node_count    = 2 
 }
 
 module "elb" {
@@ -56,7 +56,8 @@ module "elb" {
   vpc_id     = module.vpc.vpc_id
   subnet_id  = module.vpc.subnet_id
   vpc_subnet = module.vpc.vpc_subnet
-  nodeport   = 31914
+  # $repo_root/nginx/values.yaml
+  nodeport   = 31709 
   #lb_config  = module.elb.lb_config
   lb_config = {
     lb_count      = var.lb_config.lb_count
