@@ -1,8 +1,15 @@
 controller:
-  kind: DaemonSet 
+  #kind: DaemonSet
+  replicaCount: 6
   service:
-    externalTrafficPolicy: Local
+    #externalTrafficPolicy: Local
     type: NodePort
     nodePorts: 
      http: 31709
-
+  tolerations:
+    - key: "ingress"
+      operator: "Equal"
+      value: "true"
+      effect: "NoSchedule"
+  nodeSelector:
+    ingress: "true"

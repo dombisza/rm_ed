@@ -1,8 +1,16 @@
 data "opentelekomcloud_identity_project_v3" "current" {}
 
 variable "azs" {
-  type = list
   default = ["eu-de-01", "eu-de-02"]
+}
+
+variable "availability_zone" {
+  type = string
+  default = "eu-de-01"
+}
+
+variable "ingress_node_count" {
+  default = 3
 }
 
 variable "metrics_version" {
@@ -61,7 +69,7 @@ variable "scaling" {
   default = {
     start = 1
     min = 1
-    max = 3
+    max = 2
   }
 }
 

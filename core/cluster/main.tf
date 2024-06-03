@@ -57,6 +57,41 @@ resource "opentelekomcloud_cce_node_pool_v3" "this" {
   }
 }
 
+
+## [CCE SELF MANAGED NODES]
+
+resource "opentelekomcloud_cce_node_v3" "node" {
+  count             = var.ingress_node_count
+  name              = "node${count.index + 1}"
+  cluster_id        = opentelekomcloud_cce_cluster_v3.this.id
+  availability_zone = var.availability_zone 
+
+  os          = var.node_os
+  flavor_id   = var.node_flavor 
+  key_pair    = var.key_name
+
+  k8s_tags = {
+    "ingress" = "true"
+    #this is needed to avoid recreation of nodes on applies
+    "node.cce.io/billing-mode" = "post-paid"
+  }
+  taints {
+    key = "ingress"
+    value = "true"
+    effect = "NoSchedule"
+  }
+  root_volume {
+    size       = var.root_vol 
+    volumetype = "SSD"
+  }
+
+  data_volumes {
+    size       = var.data_vol
+    volumetype = "SSD"
+  }
+}
+
+
 ## [CCE KUBECONFIG]
 
 #resource "null_resource" "get_kube_config" {
@@ -123,4 +158,8 @@ resource "opentelekomcloud_cce_addon_v3" "autoscaler" {
       "unremovableNodeRecheckTimeout" = 7
     }
   }
+}
+
+output "node_private_ips" {
+  value = [for node in opentelekomcloud_cce_node_v3.node : node.private_ip]
 }
