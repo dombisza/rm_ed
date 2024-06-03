@@ -5,10 +5,6 @@ variable "azs" {
   default = ["eu-de-01", "eu-de-02"]
 }
 
-variable "node_count" {
-  default = 3
-}
-
 variable "metrics_version" {
   type = string
   default = "1.3.37"

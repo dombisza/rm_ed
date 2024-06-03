@@ -29,59 +29,33 @@ resource "opentelekomcloud_cce_cluster_v3" "this" {
 
 ## [CCE NODEPOOLS]
 
-# resource "opentelekomcloud_cce_node_pool_v3" "this" {
-  # for_each                 = toset(var.azs)
-  # availability_zone        = each.key
-  # cluster_id               = opentelekomcloud_cce_cluster_v3.this.id
-  # name                     = "${var.prefix}-nodepool-v3-${each.key}"
-  # os                       = var.node_os
-  # flavor                   = var.node_flavor
-  # key_pair                 = var.key_name
-  # scale_enable             = var.scale_enabled
-  # initial_node_count       = var.scale_enabled ? var.scaling["start"] : null
-  # min_node_count           = var.scale_enabled ? var.scaling["min"] : null
-  # max_node_count           = var.scale_enabled ? var.scaling["max"] : null
-  # scale_down_cooldown_time = 100
-  # priority                 = 1
-  # runtime                  = "containerd"
-  # lifecycle {
-    # create_before_destroy = true
-  # }
-  # root_volume {
-    # size       = var.root_vol
-    # volumetype = "SSD"
-  # }
-  # data_volumes {
-    # size       = var.data_vol
-    # volumetype = "SSD"
-  # }
-# }
-#
-
-## [CCE SELF MANAGED NODES]
-
-resource "opentelekomcloud_cce_node_v3" "node" {
-  count             = var.node_count
-  name              = "node${count.index + 1}"
-  cluster_id        = opentelekomcloud_cce_cluster_v3.this.id
-  availability_zone = "eu-de-01" 
-
-  os          = var.node_os
-  flavor_id   = var.node_flavor 
-  key_pair    = var.key_name
-
-
+resource "opentelekomcloud_cce_node_pool_v3" "this" {
+  for_each                 = toset(var.azs)
+  availability_zone        = each.key
+  cluster_id               = opentelekomcloud_cce_cluster_v3.this.id
+  name                     = "${var.prefix}-nodepool-v3-${each.key}"
+  os                       = var.node_os
+  flavor                   = var.node_flavor
+  key_pair                 = var.key_name
+  scale_enable             = var.scale_enabled
+  initial_node_count       = var.scale_enabled ? var.scaling["start"] : null
+  min_node_count           = var.scale_enabled ? var.scaling["min"] : null
+  max_node_count           = var.scale_enabled ? var.scaling["max"] : null
+  scale_down_cooldown_time = 100
+  priority                 = 1
+  runtime                  = "containerd"
+  lifecycle {
+    create_before_destroy = true
+  }
   root_volume {
-    size       = var.root_vol 
+    size       = var.root_vol
     volumetype = "SSD"
   }
-
   data_volumes {
     size       = var.data_vol
     volumetype = "SSD"
   }
 }
-
 
 ## [CCE KUBECONFIG]
 
@@ -149,8 +123,4 @@ resource "opentelekomcloud_cce_addon_v3" "autoscaler" {
       "unremovableNodeRecheckTimeout" = 7
     }
   }
-}
-
-output "node_private_ips" {
-  value = [for node in opentelekomcloud_cce_node_v3.node : node.private_ip]
 }
