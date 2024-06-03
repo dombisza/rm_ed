@@ -6,4 +6,4 @@ lb_config = {
   lb_members    = module.cce.node_private_ips
 }
 
-nodeport = 31914
+ingress_nodeport = 31914

@@ -59,7 +59,7 @@ resource "opentelekomcloud_lb_listener_v3" "listener" {
 
 resource "opentelekomcloud_lb_pool_v3" "lb_node_pool" {
   count = var.lb_config.lb_count
-  name  = "kubernetes-nodeport-${count.index + 1}"
+  name  = "kubernetes-ingress_nodeport-${count.index + 1}"
 
   loadbalancer_id = opentelekomcloud_lb_loadbalancer_v3.node_lb[count.index].id
   listener_id     = opentelekomcloud_lb_listener_v3.listener[count.index].id
@@ -73,18 +73,18 @@ resource "opentelekomcloud_lb_member_v3" "member" {
 
   pool_id       = opentelekomcloud_lb_pool_v3.lb_node_pool[count.index % var.lb_config.lb_count].id
   address       = var.lb_config.lb_members[floor(count.index / var.lb_config.lb_count)]
-  protocol_port = var.nodeport
+  protocol_port = var.ingress_nodeport
 }
 
-resource "opentelekomcloud_lb_monitor_v3" "lb_node_health_check" {
-  count        = var.disable_health_check ? 0 : var.lb_config.lb_count
-  name         = "${var.prefix}-node-health"
-  pool_id      = opentelekomcloud_lb_pool_v3.lb_node_pool[count.index].id
-  type         = "TCP"
-  delay        = 15
-  timeout      = 10
-  monitor_port = 80
-
-  max_retries      = 10
-  max_retries_down = 1
-}
+#resource "opentelekomcloud_lb_monitor_v3" "lb_node_health_check" {
+#  count        = var.disable_health_check ? 0 : var.lb_config.lb_count
+#  name         = "${var.prefix}-node-health"
+#  pool_id      = opentelekomcloud_lb_pool_v3.lb_node_pool[count.index].id
+#  type         = "TCP"
+#  delay        = 15
+#  timeout      = 10
+#  monitor_port = 80
+#
+#  max_retries      = 10
+#  max_retries_down = 1
+#}
