@@ -10,5 +10,5 @@ resource "opentelekomcloud_dns_recordset_v2" "this" {
   name        = "${var.sub_domain}.${var.domain}"
   ttl         = 300
   type        = "A"
-  records     = [var.elb_ip]
+  records     = var.elb_ip
 }

@@ -73,7 +73,7 @@ module "dns" {
   domain = "sdombi.hu."
   sub_domain = "nginx"
   email = "dombisza@gmail.com"
-  elb_ip = flatten(module.elb.lb_public_ips)
+  elb_ip = module.elb.lb_public_ips
 }
 
 output "elb_members" {
