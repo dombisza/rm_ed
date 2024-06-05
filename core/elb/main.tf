@@ -79,4 +79,4 @@ resource "opentelekomcloud_lb_member_v3" "member" {
 
 output "lb_public_ips" {
   value = [for node_lb in opentelekomcloud_lb_loadbalancer_v3.node_lb : node_lb.public_ip[0].address]
-}  
+}

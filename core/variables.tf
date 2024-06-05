@@ -32,8 +32,8 @@ variable "lb_config" {
     lb_members    = list(string)
   })
   default = {
-    lb_count      = 3
-    eip_bandwidth = 100
+    lb_count      = 2
+    eip_bandwidth = 1000
     lb_algorithm  = "ROUND_ROBIN"
     lb_protocol   = "TCP"
     lb_members    = []

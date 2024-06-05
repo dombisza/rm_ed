@@ -55,8 +55,3 @@ variable "lb_config" {
   }
   description = "LB configurational parameters"
 }
-
-variable "disable_health_check" {
-  type = bool
-  default = false
-}

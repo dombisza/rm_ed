@@ -76,6 +76,16 @@ module "dns" {
   elb_ip = module.elb.lb_public_ips
 }
 
+module "waf" {
+  source = "./waf"
+  prefix = local.prefix
+  wafd_config = {
+    wafd_count = var.lb_config.lb_count
+  } 
+  vpc_id     = module.vpc.vpc_id
+  subnet_id  = module.vpc.subnet_id
+}
+
 output "elb_members" {
   value = module.cce.node_private_ips
   #value = [for node in opentelekomcloud_cce_node_v3.node : node.private_ip]
