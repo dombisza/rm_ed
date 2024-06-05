@@ -38,16 +38,16 @@ module "bastion" {
 }
 
 module "cce" {
-  source        = "./cluster"
-  prefix        = local.prefix
-  vpc_id        = module.vpc.vpc_id
-  subnet_id     = module.vpc.subnet_id
-  node_flavor   = "c4.xlarge.2"
-  key_name      = module.key.key_name
-  scale_enabled = true
-  node_os       = "HCE OS 2.0"
-  cnt           = "vpc-router"
-  ingress_node_count    = 2 
+  source             = "./cluster"
+  prefix             = local.prefix
+  vpc_id             = module.vpc.vpc_id
+  subnet_id          = module.vpc.subnet_id
+  node_flavor        = "c4.xlarge.2"
+  key_name           = module.key.key_name
+  scale_enabled      = true
+  node_os            = "HCE OS 2.0"
+  cnt                = "vpc-router"
+  ingress_node_count = 2
 }
 
 module "elb" {
@@ -57,23 +57,23 @@ module "elb" {
   subnet_id  = module.vpc.subnet_id
   vpc_subnet = module.vpc.vpc_subnet
   # $repo_root/nginx/values.yaml
-  ingress_nodeport   = 31709 
+  ingress_nodeport = 31709
   #lb_config  = module.elb.lb_config
   lb_config = {
     lb_count      = var.lb_config.lb_count
     eip_bandwidth = var.lb_config.eip_bandwidth
     lb_algorithm  = var.lb_config.lb_algorithm
 
-    lb_protocol   = var.lb_config.lb_protocol
-    lb_members    = module.cce.node_private_ips
+    lb_protocol = var.lb_config.lb_protocol
+    lb_members  = module.cce.node_private_ips
   }
 }
 module "dns" {
-  source = "./dns"
-  domain = "sdombi.hu."
+  source     = "./dns"
+  domain     = "sdombi.hu."
   sub_domain = "nginx"
-  email = "dombisza@gmail.com"
-  elb_ip = module.elb.lb_public_ips
+  email      = "dombisza@gmail.com"
+  elb_ip     = module.elb.lb_public_ips
 }
 
 output "elb_members" {

@@ -34,16 +34,16 @@ variable "ingress_node_count" {
 }
 
 variable "ingress_nodeport" {
-  type = number
+  type        = number
   description = "Nodeport to where the LB connects"
 }
 
 variable "lb_config" {
   type = object({
     lb_count      = number
-    eip_bandwidth = number 
+    eip_bandwidth = number
     lb_algorithm  = string
-    lb_protocol   = string 
+    lb_protocol   = string
     lb_members    = list(string)
   })
   default = {
@@ -57,6 +57,6 @@ variable "lb_config" {
 }
 
 variable "disable_health_check" {
-  type = bool
+  type    = bool
   default = false
 }

@@ -1,18 +1,18 @@
 ## [CCE CLUSTER]
 
 data "opentelekomcloud_cce_addon_template_v3" "autoscaler" {
-  addon_version = var.autoscaler_version 
+  addon_version = var.autoscaler_version
   addon_name    = "autoscaler"
 }
 
 data "opentelekomcloud_cce_addon_template_v3" "metrics" {
-  addon_version = var.metrics_version 
+  addon_version = var.metrics_version
   addon_name    = "metrics-server"
 }
 
 # data "opentelekomcloud_cce_addon_templates_v3" "everest" {
-  # cluster_version = var.everest_version
-  # addon_name      = "everest"
+# cluster_version = var.everest_version
+# addon_name      = "everest"
 # }
 
 resource "opentelekomcloud_cce_cluster_v3" "this" {
@@ -65,11 +65,11 @@ resource "opentelekomcloud_cce_node_v3" "node" {
   count             = var.ingress_node_count
   name              = "node${count.index + 1}"
   cluster_id        = opentelekomcloud_cce_cluster_v3.this.id
-  availability_zone = var.availability_zone 
+  availability_zone = var.availability_zone
 
-  os          = var.node_os
-  flavor_id   = var.node_flavor 
-  key_pair    = var.key_name
+  os        = var.node_os
+  flavor_id = var.node_flavor
+  key_pair  = var.key_name
 
   k8s_tags = {
     "ingress" = "true"
@@ -77,12 +77,12 @@ resource "opentelekomcloud_cce_node_v3" "node" {
     "node.cce.io/billing-mode" = "post-paid"
   }
   taints {
-    key = "ingress"
-    value = "true"
+    key    = "ingress"
+    value  = "true"
     effect = "NoSchedule"
   }
   root_volume {
-    size       = var.root_vol 
+    size       = var.root_vol
     volumetype = "SSD"
   }
 
