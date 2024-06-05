@@ -23,16 +23,6 @@ resource "opentelekomcloud_lb_loadbalancer_v3" "node_lb" {
   ]
 }
 
-resource "opentelekomcloud_lb_loadbalancer_v2" "shared_node_lb" {
-  count         = var.shared_lb_config.lb_count
-  name          = "shlb-${count.index + 1}"
-  vip_subnet_id = var.vpc_subnet
-
-  depends_on = [
-    opentelekomcloud_vpc_eip_v1.lb_fip
-  ]
-}
-
 resource "opentelekomcloud_vpc_eip_v1" "lb_fip" {
   count = var.lb_config.lb_count
 
@@ -67,27 +57,6 @@ resource "opentelekomcloud_lb_listener_v3" "listener" {
   }
 }
 
-resource "opentelekomcloud_lb_listener_v2" "shared_lb_node_listener" {
-  count           = var.shared_lb_config.lb_count
-  name            = "${var.prefix}-shared_node-listener"
-  protocol        = "TCP"
-  protocol_port   = 80
-  loadbalancer_id = opentelekomcloud_lb_loadbalancer_v2.shared_node_lb[count.index].id
-  default_pool_id = var.shared_lb_config.shared_node_pool_ids
-
-  lifecycle {
-    create_before_destroy = true
-  }
-}
-
-output "shared_lb_node_listener_ids" {
-  value = opentelekomcloud_lb_listener_v2.shared_lb_node_listener[*].id
-}
-
-output "shared_node_pool_ids" {
-  value = opentelekomcloud_lb_pool_v2.shared_lb_node_pool[*].id
-}
-
 resource "opentelekomcloud_lb_pool_v3" "lb_node_pool" {
   count = var.lb_config.lb_count
   name  = "kubernetes-ingress_nodeport-${count.index + 1}"
@@ -99,29 +68,12 @@ resource "opentelekomcloud_lb_pool_v3" "lb_node_pool" {
   description     = "Pool of application nodes"
 }
 
-resource "opentelekomcloud_lb_pool_v2" "shared_lb_node_pool" {
-  count           = var.shared_lb_config.lb_count
-  name            = "kubernetes-ingress_nodeport-${count.index + 1}"
-  description     = "Pool of nginx ingress controller nodes"
-  protocol        = var.shared_lb_config.lb_protocol
-  lb_method       = var.shared_lb_config.lb_method
-  loadbalancer_id = opentelekomcloud_lb_loadbalancer_v2.shared_node_lb[count.index].id
-}
-
 resource "opentelekomcloud_lb_member_v3" "member" {
   count = length(var.lb_config.lb_members) * var.lb_config.lb_count
 
   pool_id       = opentelekomcloud_lb_pool_v3.lb_node_pool[count.index % var.lb_config.lb_count].id
   address       = var.lb_config.lb_members[floor(count.index / var.lb_config.lb_count)]
   protocol_port = var.ingress_nodeport
-}
-
-resource "opentelekomcloud_lb_member_v2" "shared_lb_node_pool_membership" {
-  count         = var.shared_lb_config.lb_count
-  address       = var.shared_lb_config.lb_members[floor(count.index / var.shared_lb_config.lb_count)]
-  protocol_port = var.ingress_nodeport
-  pool_id       = opentelekomcloud_lb_pool_v2.shared_lb_node_pool[count.index % var.shared_lb_config.lb_count].id
-  subnet_id     = var.vpc_subnet
 }
 
 #resource "opentelekomcloud_lb_monitor_v3" "lb_node_health_check" {
@@ -135,4 +87,55 @@ resource "opentelekomcloud_lb_member_v2" "shared_lb_node_pool_membership" {
 #
 #  max_retries      = 10
 #  max_retries_down = 1
+#}
+
+## [Shared LB resources]
+
+#resource "opentelekomcloud_lb_loadbalancer_v2" "shared_node_lb" {
+#  count         = var.shared_lb_config.lb_count
+#  name          = "shlb-${count.index + 1}"
+#  vip_subnet_id = var.vpc_subnet
+#
+#  depends_on = [
+#    opentelekomcloud_vpc_eip_v1.lb_fip
+#  ]
+#}
+
+#resource "opentelekomcloud_lb_listener_v2" "shared_lb_node_listener" {
+#  count           = var.shared_lb_config.lb_count
+#  name            = "${var.prefix}-shared_node-listener"
+#  protocol        = "TCP"
+#  protocol_port   = 80
+#  loadbalancer_id = opentelekomcloud_lb_loadbalancer_v2.shared_node_lb[count.index].id
+#  default_pool_id = var.shared_lb_config.shared_node_pool_ids
+#
+#  lifecycle {
+#    create_before_destroy = true
+#  }
+#}
+
+#resource "opentelekomcloud_lb_pool_v2" "shared_lb_node_pool" {
+#  count           = var.shared_lb_config.lb_count
+#  name            = "kubernetes-ingress_nodeport-${count.index + 1}"
+#  description     = "Pool of nginx ingress controller nodes"
+#  protocol        = var.shared_lb_config.lb_protocol
+#  lb_method       = var.shared_lb_config.lb_method
+#  loadbalancer_id = opentelekomcloud_lb_loadbalancer_v2.shared_node_lb[count.index].id
+#}
+
+
+#output "shared_lb_node_listener_ids" {
+#  value = opentelekomcloud_lb_listener_v2.shared_lb_node_listener[*].id
+#}
+
+#output "shared_node_pool_ids" {
+#  value = opentelekomcloud_lb_pool_v2.shared_lb_node_pool[*].id
+#}
+
+#resource "opentelekomcloud_lb_member_v2" "shared_lb_node_pool_membership" {
+#  count         = var.shared_lb_config.lb_count
+#  address       = var.shared_lb_config.lb_members[floor(count.index / var.shared_lb_config.lb_count)]
+#  protocol_port = var.ingress_nodeport
+#  pool_id       = opentelekomcloud_lb_pool_v2.shared_lb_node_pool[count.index % var.shared_lb_config.lb_count].id
+#  subnet_id     = var.vpc_subnet
 #}
