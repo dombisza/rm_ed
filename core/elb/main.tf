@@ -74,17 +74,6 @@ resource "opentelekomcloud_lb_member_v3" "member" {
   pool_id       = opentelekomcloud_lb_pool_v3.lb_node_pool[count.index % var.lb_config.lb_count].id
   address       = var.lb_config.lb_members[floor(count.index / var.lb_config.lb_count)]
   protocol_port = var.nodeport
+  subnet_id = var.vpc_subnet
 }
 
-resource "opentelekomcloud_lb_monitor_v3" "lb_node_health_check" {
-  count        = var.disable_health_check ? 0 : var.lb_config.lb_count
-  name         = "${var.prefix}-node-health"
-  pool_id      = opentelekomcloud_lb_pool_v3.lb_node_pool[count.index].id
-  type         = "TCP"
-  delay        = 15
-  timeout      = 10
-  monitor_port = 80
-
-  max_retries      = 10
-  max_retries_down = 1
-}
