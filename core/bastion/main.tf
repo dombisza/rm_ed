@@ -5,7 +5,7 @@ data "opentelekomcloud_images_image_v2" "ubuntu" {
 }
 
 resource "opentelekomcloud_networking_secgroup_v2" "this" {
-  name = "bastion"
+  name        = "bastion"
   description = "bastion allow 22"
 }
 
@@ -33,15 +33,15 @@ resource "opentelekomcloud_vpc_eip_v1" "bastion" {
 
 resource "opentelekomcloud_networking_floatingip_associate_v2" "ubuntu_fip" {
   floating_ip = opentelekomcloud_vpc_eip_v1.bastion.publicip.0.ip_address
-  port_id = opentelekomcloud_ecs_instance_v1.bastion.nics.0.port_id
+  port_id     = opentelekomcloud_ecs_instance_v1.bastion.nics.0.port_id
 }
 
 resource "opentelekomcloud_ecs_instance_v1" "bastion" {
-  name     = "${var.prefix}-bastion"
-  image_id = data.opentelekomcloud_images_image_v2.ubuntu.id
-  flavor   = "s3.large.2"
-  vpc_id   = var.vpc_id
-  security_groups   = [opentelekomcloud_networking_secgroup_v2.this.id]
+  name             = "${var.prefix}-bastion"
+  image_id         = data.opentelekomcloud_images_image_v2.ubuntu.id
+  flavor           = "s3.large.2"
+  vpc_id           = var.vpc_id
+  security_groups  = [opentelekomcloud_networking_secgroup_v2.this.id]
   system_disk_type = "SAS"
   system_disk_size = 40
   nics {
@@ -50,7 +50,7 @@ resource "opentelekomcloud_ecs_instance_v1" "bastion" {
   }
 
   availability_zone = var.az
-  key_name          = var.key_name 
+  key_name          = var.key_name
 
   tags = var.tags
 }

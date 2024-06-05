@@ -34,7 +34,7 @@ resource "opentelekomcloud_vpc_eip_v1" "lb_fip" {
   }
 
   publicip {
-    type    = "5_bgp"
+    type = "5_bgp"
     #port_id = opentelekomcloud_lb_loadbalancer_v3.node_lb[count.index].vip_port_id
   }
 
@@ -45,10 +45,10 @@ resource "opentelekomcloud_vpc_eip_v1" "lb_fip" {
 
 resource "opentelekomcloud_lb_listener_v3" "listener" {
   #count           = local.loadbalancer_count
-  count           = var.lb_config.lb_count
-  name            = "${var.prefix}-node-cce-listener"
-  protocol        = "TCP"
-  protocol_port   = 80
+  count         = var.lb_config.lb_count
+  name          = "${var.prefix}-node-cce-listener"
+  protocol      = "TCP"
+  protocol_port = 80
   #loadbalancer_id = var.node_lb_ids[count.index]
   loadbalancer_id = opentelekomcloud_lb_loadbalancer_v3.node_lb[count.index].id
 
@@ -74,7 +74,7 @@ resource "opentelekomcloud_lb_member_v3" "member" {
   pool_id       = opentelekomcloud_lb_pool_v3.lb_node_pool[count.index % var.lb_config.lb_count].id
   address       = var.lb_config.lb_members[floor(count.index / var.lb_config.lb_count)]
   protocol_port = var.ingress_nodeport
-  subnet_id = var.vpc_subnet
+  subnet_id     = var.vpc_subnet
 }
 
 output "lb_public_ips" {
