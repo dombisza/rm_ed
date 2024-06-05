@@ -67,14 +67,13 @@ module "elb" {
     lb_protocol   = var.lb_config.lb_protocol
     lb_members    = module.cce.node_private_ips
   }
-  shared_lb_config = {
-    lb_count      = var.shared_lb_config.lb_count
-    eip_bandwidth = var.shared_lb_config.eip_bandwidth
-    lb_method     = var.shared_lb_config.lb_method
-    lb_protocol   = var.shared_lb_config.lb_protocol
-    #default_pool_id = module.elb.default_pool_id
-    shared_node_pool_ids = var.shared_lb_config.shared_node_pool_ids
-  }
+}
+module "dns" {
+  source = "./dns"
+  domain = "sdombi.hu."
+  sub_domain = "nginx"
+  email = "dombisza@gmail.com"
+  elb_ip = module.elb.lb_public_ips
 }
 
 output "elb_members" {
@@ -82,6 +81,6 @@ output "elb_members" {
   #value = [for node in opentelekomcloud_cce_node_v3.node : node.private_ip]
 }
 
-output "shared_node_pool_ids" {
-  value = module.elb.shared_node_pool_ids
+output "elb_instances" {
+  value = module.elb.lb_public_ips
 }
