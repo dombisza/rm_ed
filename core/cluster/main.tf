@@ -59,6 +59,7 @@ resource "opentelekomcloud_cce_node_pool_v3" "this" {
 
 
 ## [CCE SELF MANAGED NODES]
+# dedicated nginx ingress nodes, not application nodes!
 
 resource "opentelekomcloud_cce_node_v3" "node" {
   count             = var.ingress_node_count

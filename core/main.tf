@@ -57,17 +57,17 @@ module "elb" {
   subnet_id  = module.vpc.subnet_id
   vpc_subnet = module.vpc.vpc_subnet
   # $repo_root/nginx/values.yaml
-  nodeport   = 31709 
+  ingress_nodeport   = 31709 
   #lb_config  = module.elb.lb_config
   lb_config = {
     lb_count      = var.lb_config.lb_count
     eip_bandwidth = var.lb_config.eip_bandwidth
     lb_algorithm  = var.lb_config.lb_algorithm
+
     lb_protocol   = var.lb_config.lb_protocol
     lb_members    = module.cce.node_private_ips
   }
 }
-
 module "dns" {
   source = "./dns"
   domain = "sdombi.hu."

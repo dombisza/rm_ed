@@ -6,7 +6,7 @@
 #}
 #variable "lb_members" {}
 #variable "vpc_subnet" {}
-#variable "nodeport" {}
+#variable "ingress_nodeport" {}
 
 
 variable "prefix" {
@@ -29,7 +29,11 @@ variable "subnet_id" {
   description = "The ID of the subnet to which the LoadBalancer belongs"
 }
 
-variable "nodeport" {
+variable "ingress_node_count" {
+  default = 3
+}
+
+variable "ingress_nodeport" {
   type = number
   description = "Nodeport to where the LB connects"
 }
@@ -51,11 +55,6 @@ variable "lb_config" {
   }
   description = "LB configurational parameters"
 }
-
-#variable "node_lb_ids" {
-#  type = list(string)
-#  description = "Reference to loadbalancer for frontend endpoints" 
-#}
 
 variable "disable_health_check" {
   type = bool

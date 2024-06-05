@@ -40,4 +40,3 @@ variable "lb_config" {
   }
   description = "LB configurational parameters"
 }
-
