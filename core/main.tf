@@ -68,7 +68,19 @@ module "elb" {
   }
 }
 
+module "dns" {
+  source = "./dns"
+  domain = "sdombi.hu."
+  sub_domain = "nginx"
+  email = "dombisza@gmail.com"
+  elb_ip = flatten(module.elb.lb_public_ips)
+}
+
 output "elb_members" {
   value = module.cce.node_private_ips
   #value = [for node in opentelekomcloud_cce_node_v3.node : node.private_ip]
+}
+
+output "elb_instances" {
+  value = module.elb.lb_public_ips
 }
