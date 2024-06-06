@@ -47,7 +47,7 @@ module "cce" {
   scale_enabled      = true
   node_os            = "HCE OS 2.0"
   cnt                = "vpc-router"
-  ingress_node_count = 2
+  ingress_node_count = var.ingress_node_count
 }
 
 module "elb" {

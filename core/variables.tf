@@ -23,6 +23,8 @@ variable "region" {
   default = "eu-de"
 }
 
+variable "ingress_node_count" {}
+
 variable "lb_config" {
   type = object({
     lb_count      = number
