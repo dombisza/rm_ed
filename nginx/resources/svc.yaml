@@ -8,7 +8,6 @@ metadata:
 spec:
   selector:
     app: nginx-app
-  internalTrafficPolicy: Local
   ports:
     - protocol: TCP
       port: 80
